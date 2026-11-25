@@ -1,0 +1,7 @@
+{
+  "name": "radar-google-shopping-piloto",
+  "private": true,
+  "version": "0.1.0",
+  "dependencies": {"playwright": "1.62.1"},
+  "scripts": {"test": "node ../tests/browser.test.cjs"}
+}
