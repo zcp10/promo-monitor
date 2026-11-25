@@ -1,0 +1,18 @@
+[project]
+name = "promo-monitor"
+version = "0.1.0"
+description = "Brazilian retail promotion monitor with product matching, marketplace fee/profit modeling, and Telegram alerts."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { file = "LICENSE" }
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

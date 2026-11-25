@@ -1,0 +1,82 @@
+# === Segredos e credenciais ===
+.env
+.env.*
+!.env.example
+*.session
+*.session-journal
+credenciais/
+credentials*.json
+client_secret*.json
+service_account*.json
+token*.json
+*_token.json
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa*
+secrets.*
+dashboard/config.js
+dashboard/dist/
+
+# === Dados e estado local ===
+data/*
+!data/.gitkeep
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+ultima-rodada*.json
+storage_state*.json
+cookies*.json
+*.har
+.shopping-backups/
+.shopping-browser/
+*backup*/
+*.bak
+browser/pilot/docker-config/
+browser/pilot/latest.png
+
+# === Logs e saídas ===
+logs/
+*.log
+out/
+output/
+screenshots/
+monitoramento-visual/
+tmp/
+cache/
+
+# === Arquivos compactados ===
+*.zip
+*.7z
+*.rar
+*.tar
+*.tar.gz
+
+# === Python ===
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.egg-info/
+build/
+dist/
+
+# === Node (browser / dashboard) ===
+node_modules/
+
+# === Editores / agentes / SO ===
+.vscode/
+.idea/
+.claude/
+.antigravity/
+.cursor/
+Thumbs.db
+Desktop.ini
+.DS_Store
