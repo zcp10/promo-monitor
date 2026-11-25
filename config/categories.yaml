@@ -1,0 +1,471 @@
+# ============================================================
+#  Catálogo de revenda — categorias e produtos "top" (out/2026)
+#
+#  comparar: modelo         -> só vale o MESMO modelo (RTX 5060, iPhone 16, G203)
+#  comparar: especificacao  -> vale qualquer marca com as mesmas especificações
+#                              (SSD NVMe 1TB; monitor 21,5" Full HD)
+#  mesma_marca: true        -> no modo especificação, exige também a mesma marca
+#  specs                    -> o que precisa bater (ver promo/catalog.py: SPECS)
+#  busca                    -> texto curto usado nas lojas; {spec} é preenchido
+#  liquidez                 -> alta = sai rápido / media / baixa = demora ou é volumoso
+#  detectar / excluir       -> palavras do título (sem acento, minúsculas)
+#
+#  Fontes da lista: rankings de mais vendidos de Mercado Livre e Shopee 2026
+#  (Nuvemshop, Melhor Envio, Duoke, Bagy, Loja Integrada) + o que mais aparece nos
+#  grupos de promoção monitorados (hardware, celular, games, áudio, casa).
+#  A ordem importa: a primeira categoria que casar vence.
+# ============================================================
+
+marcas: [apple, samsung, motorola, xiaomi, redmi, poco, realme, lg, sony, philips, philco, tcl, aoc,
+         lenovo, acer, asus, dell, hp, positivo, multilaser, intelbras, tp-link, mercusys, kingston,
+         crucial, western digital, wd, sandisk, seagate, adata, xpg, corsair, hyperx, logitech,
+         redragon, razer, jbl, edifier, qcy, haylou, anker, baseus, ugreen, amazon, mondial, britania,
+         electrolux, oster, arno, walita, wap, black+decker, bosch, makita, dewalt, electrolux,
+         midea, gree, elgin, consul, brastemp, nintendo, microsoft, msi, gigabyte, asrock, galax,
+         pny, zotac, palit, sapphire, powercolor, rise mode, pichau, mancer, husky, aula, machenike,
+         attack shark, fifine, superframe, duex, lg, epson, canon, brother, tapo, imou, ezviz,
+         huawei, honor, oppo, vivo, oneplus, google, nothing, tgt, thunderx3, dt3, fox racer, cougar, elsys,
+         easysmx, gamesir, 8bitdo, awei, tomate, lenoxx, mchose, dji, gopro, insta360, biostar, cooler master,
+         deepcool, lian li, nzxt, thermaltake, montech, gudga, juhor, kootion, envinda, netac, lexar, kingspec,
+         teamgroup, patriot, hp, positivo, vaio, ugreen, essager, kz, soundpeats, edifier, havit, onikuma,
+         marshall, bose, beats, shokz, britania, cadence, c3tech, elg, vinik, exbom, knup]
+
+categorias:
+  # ---------------- Celulares, tablets, relógios (alta) ----------------
+  iphone:
+    nome: iPhone
+    detectar: [iphone]
+    excluir: [capa, capinha, pelicula, case, carregador, cabo, suporte, lente, protetor, bateria externa]
+    comparar: modelo
+    specs: [capacidade]
+    liquidez: alta
+  smartphone:
+    nome: Smartphone
+    detectar: [smartphone, celular, galaxy, moto g, motorola edge, redmi note, redmi, poco, realme]
+    excluir: [capa, capinha, pelicula, case, carregador, cabo, suporte, galaxy tab, galaxy watch,
+              galaxy buds, smartwatch, relogio, band, tablet, redmi pad, fone]
+    comparar: modelo
+    specs: [capacidade, ram]
+    liquidez: alta
+  tablet:
+    nome: Tablet / iPad
+    detectar: [ipad, tablet, galaxy tab, redmi pad, xiaomi pad, tab a9, tab s10]
+    excluir: [capa, case, pelicula, teclado para, caneta, suporte, pencil]
+    comparar: modelo
+    specs: [capacidade]
+    liquidez: alta
+  smartwatch:
+    nome: Smartwatch / pulseira
+    detectar: [smartwatch, apple watch, galaxy watch, smart band, mi band, amazfit, relogio inteligente]
+    excluir: [pulseira para, pulseira de, pelicula, capa, case, carregador para, suporte]
+    comparar: modelo
+    liquidez: alta
+  kindle:
+    nome: Kindle / e-reader
+    detectar: [kindle]
+    excluir: [capa, case, pelicula, suporte]
+    comparar: modelo
+    reuso: modelo          # segunda opinião: mesmo modelo, qualquer marca de placa/vendedor
+    liquidez: alta
+
+  # ---------------- Games (alta) ----------------
+  console:
+    nome: Console
+    detectar: [playstation 5, ps5, xbox series, nintendo switch, switch 2, switch oled, switch lite, steam deck, meta quest]
+    excluir: [jogo, game para, capa, case, pelicula, controle, suporte, base, carregador, cabo, skin, headset, fone, joy-con]
+    comparar: modelo
+    reuso: modelo          # segunda opinião: mesmo modelo, qualquer marca de placa/vendedor
+    specs: [capacidade]
+    liquidez: alta
+  controle:
+    nome: Controle de videogame
+    detectar: [dualsense, controle, joystick, gamepad]
+    excluir: [controle remoto, capa, case, suporte, base, carregador para, grip, skin]
+    comparar: modelo
+    reuso: modelo          # segunda opinião: mesmo modelo, qualquer marca de placa/vendedor
+    liquidez: alta
+
+  # ---------------- Hardware de PC ----------------
+  placa_de_video:
+    nome: Placa de vídeo
+    detectar: [placa de video, rtx, geforce, radeon, rx 9060, rx 9070, rx 7600, rx 7700, rx 7800, rx 6600, arc b580, arc a750]
+    excluir: [notebook, laptop, suporte, riser, cabo, backplate, cooler para]
+    comparar: modelo
+    reuso: modelo          # segunda opinião: mesmo modelo, qualquer marca de placa/vendedor
+    specs: [vram]
+    liquidez: alta
+  processador:
+    nome: Processador
+    detectar: [processador, ryzen, core i3, core i5, core i7, core i9, core ultra]
+    excluir: [notebook, laptop, cooler, water cooler, placa-mae, placa mae, kit upgrade, computador, pc gamer, mini pc]
+    comparar: modelo
+    reuso: modelo          # segunda opinião: mesmo modelo, qualquer marca de placa/vendedor
+    liquidez: alta
+  placa_mae:
+    nome: Placa-mãe
+    detectar: [placa-mae, placa mae, motherboard]
+    excluir: [kit upgrade, kit, processador, memoria ram]
+    comparar: modelo
+    liquidez: media
+  ssd:
+    nome: SSD
+    detectar: [ssd]
+    excluir: [case, gaveta, adaptador, dissipador, enclosure, hd externo, notebook, computador, pc gamer, console]
+    comparar: especificacao
+    specs: [interface_ssd, capacidade]
+    busca: "SSD {interface_ssd} {capacidade}"
+    liquidez: alta
+    nota: Marca pouco importa para o comprador; o que define o preço é NVMe/SATA e capacidade.
+  memoria_ram:
+    nome: Memória RAM
+    detectar: [memoria ram, memoria, ddr4, ddr5]
+    excluir: [cartao de memoria, cartao, pendrive, ssd, notebook gamer, computador, pc gamer, placa de video, smartphone, celular, tablet]
+    comparar: especificacao
+    specs: [ddr, capacidade_ram, mhz, formato_ram]
+    busca: "Memória {ddr} {capacidade_ram} {mhz}"
+    liquidez: alta
+  fonte_pc:
+    nome: Fonte de PC
+    detectar: [fonte]
+    excluir: [fonte para notebook, carregador, fonte de alimentacao para, fonte bivolt para, fonte usb, power bank]
+    comparar: especificacao
+    specs: [watts, selo80plus]
+    busca: "Fonte {marca} {watts} {selo80plus}"
+    mesma_marca: true
+    liquidez: media
+    nota: Qualidade da fonte varia muito entre marcas; compara só dentro da mesma marca.
+  monitor:
+    nome: Monitor
+    detectar: [monitor]
+    excluir: [suporte, braco, monitor de pressao, babá, baba, monitor cardiaco, cabo]
+    comparar: especificacao
+    specs: [polegadas, resolucao, hz]
+    busca: "Monitor {polegadas} {resolucao} {hz}"
+    liquidez: alta
+    nota: Monitor da mesma faixa de tamanho, resolução e taxa conta como equivalente.
+  hd_externo:
+    nome: HD / SSD externo
+    detectar: [hd externo, ssd externo, ssd portatil, hd portatil]
+    excluir: [case, gaveta, capa]
+    comparar: especificacao
+    specs: [capacidade]
+    busca: "HD externo {capacidade}"
+    liquidez: media
+  pendrive:
+    nome: Pendrive
+    detectar: [pendrive, pen drive]
+    comparar: especificacao
+    specs: [capacidade]
+    busca: "Pendrive {capacidade}"
+    liquidez: baixa
+  cartao_memoria:
+    nome: Cartão de memória
+    detectar: [cartao de memoria, microsd, micro sd, cartao sd]
+    excluir: [leitor, adaptador]
+    comparar: especificacao
+    specs: [capacidade]
+    busca: "Cartão microSD {capacidade}"
+    liquidez: media
+  cooler:
+    nome: Cooler / water cooler
+    detectar: [water cooler, air cooler, cooler para processador, cooler]
+    excluir: [cooler para notebook, base para notebook, ventoinha para]
+    comparar: modelo
+    liquidez: media
+  gabinete:
+    nome: Gabinete
+    detectar: [gabinete]
+    comparar: modelo
+    liquidez: baixa
+  notebook:
+    nome: Notebook
+    detectar: [notebook, macbook, laptop, chromebook]
+    excluir: [capa, mochila, suporte, base, cooler para, carregador, fonte para, teclado para, bateria para, pelicula, case]
+    comparar: modelo
+    specs: [ram, capacidade]
+    liquidez: media
+  pc_gamer:
+    nome: PC / mini PC
+    detectar: [pc gamer, computador, mini pc, desktop]
+    comparar: modelo
+    liquidez: baixa
+
+  # ---------------- Periféricos ----------------
+  mouse:
+    nome: Mouse
+    detectar: [mouse]
+    excluir: [mousepad, mouse pad, bungee, grip, skate]
+    comparar: modelo
+    liquidez: alta
+  teclado:
+    nome: Teclado
+    detectar: [teclado]
+    excluir: [teclado para tablet, capa, keycap, keycaps, switch para, apoio de pulso]
+    comparar: modelo
+    liquidez: media
+  headset:
+    nome: Headset gamer
+    detectar: [headset]
+    excluir: [suporte, almofada, espuma]
+    comparar: modelo
+    liquidez: media
+  microfone:
+    nome: Microfone
+    detectar: [microfone]
+    excluir: [suporte, braco articulado, pop filter, espuma]
+    comparar: modelo
+    liquidez: media
+  webcam:
+    nome: Webcam
+    detectar: [webcam]
+    comparar: modelo
+    liquidez: media
+  roteador:
+    nome: Roteador / Wi-Fi
+    detectar: [roteador, mesh, repetidor, access point]
+    comparar: modelo
+    liquidez: media
+  cadeira:
+    nome: Cadeira gamer / escritório
+    detectar: [cadeira]
+    comparar: modelo
+    liquidez: baixa
+    nota: Volumosa; frete caro na revenda.
+
+  # ---------------- Áudio (alta) ----------------
+  fone:
+    nome: Fone de ouvido
+    detectar: [fone, airpods, earbuds, galaxy buds, tws, headphone]
+    excluir: [capa, case para, estojo, adaptador, almofada, ponteira]
+    comparar: modelo
+    liquidez: alta
+  caixa_de_som:
+    nome: Caixa de som
+    detectar: [caixa de som, speaker, soundbar, partybox, boombox, jbl flip, jbl charge, jbl go]
+    excluir: [capa, case, suporte]
+    comparar: modelo
+    liquidez: alta
+
+  # ---------------- Casa / streaming ----------------
+  assistente:
+    nome: Assistente / smart home
+    detectar: [echo dot, echo pop, echo show, alexa, google nest]
+    excluir: [suporte, capa]
+    comparar: modelo
+    reuso: modelo          # segunda opinião: mesmo modelo, qualquer marca de placa/vendedor
+    liquidez: alta
+  streaming:
+    nome: Streaming / TV box
+    detectar: [fire tv stick, fire tv, chromecast, google tv streamer, tv box, roku, mi box]
+    comparar: modelo
+    reuso: modelo          # segunda opinião: mesmo modelo, qualquer marca de placa/vendedor
+    liquidez: alta
+  tv:
+    nome: Smart TV
+    detectar: [smart tv, televisao, tv led, tv qled, tv oled, tv 4k]
+    excluir: [suporte, controle, tv box, fire tv]
+    comparar: especificacao
+    specs: [polegadas, resolucao]
+    busca: "Smart TV {marca} {polegadas} {resolucao}"
+    mesma_marca: true
+    liquidez: media
+    nota: Volumosa; venda local (retirada) costuma ser melhor que marketplace.
+  tela_projetor:
+    nome: Tela de projeção
+    detectar: [tela de projecao, tela para projetor, tela de projetor, tela projetor]
+    comparar: especificacao
+    specs: [polegadas, tipo_tela]
+    busca: "Tela de projeção {polegadas} {tipo_tela}"
+    liquidez: baixa
+    nota: Preço varia muito pelo tipo (tecido dobrável x retrátil x elétrica).
+  projetor:
+    nome: Projetor
+    detectar: [projetor]
+    excluir: [tela para projetor, tela de projetor, suporte, lampada]
+    comparar: modelo
+    liquidez: media
+  camera_seguranca:
+    nome: Câmera de segurança
+    detectar: [camera de seguranca, camera wi-fi, camera ip, camera inteligente]
+    comparar: modelo
+    liquidez: media
+  power_bank:
+    nome: Power bank
+    detectar: [power bank, powerbank, carregador portatil, bateria externa]
+    comparar: especificacao
+    specs: [mah]
+    busca: "Power bank {marca} {mah}"
+    mesma_marca: true
+    liquidez: media
+  carregador:
+    nome: Carregador
+    detectar: [carregador, fonte usb-c, fonte de carregamento]
+    excluir: [carregador portatil, power bank, bateria externa, carregador de pilha]
+    comparar: especificacao
+    specs: [watts]
+    busca: "Carregador {marca} {watts}"
+    mesma_marca: true
+    liquidez: media
+
+  # ---------------- Eletroportáteis / eletro ----------------
+  air_fryer:
+    nome: Air fryer
+    detectar: [air fryer, airfryer, fritadeira eletrica, fritadeira sem oleo]
+    excluir: [forma, cesto, papel, tapete, acessorio]
+    comparar: especificacao
+    specs: [litros]
+    busca: "Air fryer {marca} {litros}"
+    mesma_marca: true
+    liquidez: media
+  cafeteira:
+    nome: Cafeteira
+    detectar: [cafeteira, nespresso, dolce gusto, tres coracoes]
+    excluir: [capsula, capsulas, filtro]
+    comparar: modelo
+    liquidez: media
+  aspirador:
+    nome: Aspirador / robô
+    detectar: [robo aspirador, aspirador]
+    excluir: [filtro, escova para, saco]
+    comparar: modelo
+    liquidez: media
+  ar_condicionado:
+    nome: Ar-condicionado
+    detectar: [ar condicionado, ar-condicionado, split inverter]
+    comparar: especificacao
+    specs: [btus]
+    busca: "Ar condicionado {marca} {btus} inverter"
+    mesma_marca: true
+    liquidez: baixa
+    nota: Exige instalação; difícil revender por marketplace.
+  ferramenta:
+    nome: Ferramenta elétrica
+    detectar: [parafusadeira, furadeira, esmerilhadeira, lavadora de alta pressao, serra]
+    excluir: [broca, bits, disco, kit de brocas]
+    comparar: modelo
+    liquidez: media
+
+# ------------------------------------------------------------
+# Top 100 produtos para revenda (saída rápida + demanda constante)
+# termos: todos precisam aparecer; [a, b] = qualquer um dos dois
+# nao: se aparecer, NÃO é este produto (variações e acessórios)
+# ------------------------------------------------------------
+produtos_top:
+  # --- iPhone ---
+  - {nome: iPhone 17 Pro Max, categoria: iphone, termos: [iphone 17 pro max], busca: "iPhone 17 Pro Max {capacidade}"}
+  - {nome: iPhone 17 Pro, categoria: iphone, termos: [iphone 17 pro], nao: [max], busca: "iPhone 17 Pro {capacidade}"}
+  - {nome: iPhone 17, categoria: iphone, termos: [iphone 17], nao: [pro, air, plus], busca: "iPhone 17 {capacidade}"}
+  - {nome: iPhone Air, categoria: iphone, termos: [iphone air], busca: "iPhone Air {capacidade}"}
+  - {nome: iPhone 16 Pro Max, categoria: iphone, termos: [iphone 16 pro max], busca: "iPhone 16 Pro Max {capacidade}"}
+  - {nome: iPhone 16 Pro, categoria: iphone, termos: [iphone 16 pro], nao: [max], busca: "iPhone 16 Pro {capacidade}"}
+  - {nome: iPhone 16, categoria: iphone, termos: [iphone 16], nao: [pro, plus, 16e], busca: "iPhone 16 {capacidade}"}
+  - {nome: iPhone 16e, categoria: iphone, termos: [[iphone 16e, iphone 16 e]], busca: "iPhone 16e {capacidade}"}
+  - {nome: iPhone 15, categoria: iphone, termos: [iphone 15], nao: [pro, plus], busca: "iPhone 15 {capacidade}"}
+  - {nome: iPhone 13, categoria: iphone, termos: [iphone 13], nao: [pro, mini], busca: "iPhone 13 {capacidade}"}
+  # --- Samsung ---
+  - {nome: Galaxy S25 Ultra, categoria: smartphone, termos: [s25 ultra], busca: "Galaxy S25 Ultra {capacidade}"}
+  - {nome: Galaxy S25, categoria: smartphone, termos: [galaxy s25], nao: [ultra, plus, fe, edge], busca: "Galaxy S25 {capacidade}"}
+  - {nome: Galaxy S25 FE, categoria: smartphone, termos: [s25 fe], busca: "Galaxy S25 FE {capacidade}"}
+  - {nome: Galaxy Z Flip7, categoria: smartphone, termos: [[z flip7, z flip 7]], nao: [fe], busca: "Galaxy Z Flip7 {capacidade}"}
+  - {nome: Galaxy A56, categoria: smartphone, termos: [[galaxy, samsung], a56], busca: "Galaxy A56 {capacidade}"}
+  - {nome: Galaxy A36, categoria: smartphone, termos: [[galaxy, samsung], a36], busca: "Galaxy A36 {capacidade}"}
+  - {nome: Galaxy A26, categoria: smartphone, termos: [[galaxy, samsung], a26], busca: "Galaxy A26 {capacidade}"}
+  - {nome: Galaxy A16, categoria: smartphone, termos: [[galaxy, samsung], a16], busca: "Galaxy A16 {capacidade}"}
+  - {nome: Galaxy A06, categoria: smartphone, termos: [[galaxy, samsung], a06], busca: "Galaxy A06 {capacidade}"}
+  - {nome: Galaxy A55, categoria: smartphone, termos: [[galaxy, samsung], a55], busca: "Galaxy A55 {capacidade}"}
+  # --- Motorola / Xiaomi ---
+  - {nome: Moto G85, categoria: smartphone, termos: [[moto, motorola], g85], busca: "Moto G85 {capacidade}"}
+  - {nome: Moto G75, categoria: smartphone, termos: [[moto, motorola], g75], busca: "Moto G75 {capacidade}"}
+  - {nome: Moto G55, categoria: smartphone, termos: [[moto, motorola], g55], busca: "Moto G55 {capacidade}"}
+  - {nome: Moto G35, categoria: smartphone, termos: [[moto, motorola], g35], busca: "Moto G35 {capacidade}"}
+  - {nome: Moto G15, categoria: smartphone, termos: [[moto, motorola], g15], busca: "Moto G15 {capacidade}"}
+  - {nome: Redmi Note 14 Pro, categoria: smartphone, termos: [redmi note 14 pro], busca: "Redmi Note 14 Pro {capacidade}"}
+  - {nome: Redmi Note 14, categoria: smartphone, termos: [redmi note 14], nao: [pro], busca: "Redmi Note 14 {capacidade}"}
+  - {nome: Redmi 14C, categoria: smartphone, termos: [redmi 14c], busca: "Redmi 14C {capacidade}"}
+  - {nome: Poco X7 Pro, categoria: smartphone, termos: [poco x7 pro], busca: "Poco X7 Pro {capacidade}"}
+  - {nome: Poco X7, categoria: smartphone, termos: [poco x7], nao: [pro], busca: "Poco X7 {capacidade}"}
+  - {nome: Poco F7, categoria: smartphone, termos: [poco f7], nao: [pro, ultra], busca: "Poco F7 {capacidade}"}
+  # --- Tablets / e-readers / relógios ---
+  - {nome: iPad 11ª geração (A16), categoria: tablet, termos: [ipad], nao: [pro, air, mini, capa, case, pelicula, teclado, pencil], busca: "iPad A16 {capacidade}"}
+  - {nome: iPad Air M3, categoria: tablet, termos: [ipad air], busca: "iPad Air M3 {capacidade}"}
+  - {nome: Galaxy Tab S10 FE, categoria: tablet, termos: [tab s10 fe], busca: "Galaxy Tab S10 FE {capacidade}"}
+  - {nome: Galaxy Tab A9+, categoria: tablet, termos: [tab a9], busca: "Galaxy Tab A9 {capacidade}"}
+  - {nome: Kindle Paperwhite, categoria: kindle, termos: [kindle paperwhite], busca: "Kindle Paperwhite"}
+  - {nome: Kindle (básico), categoria: kindle, termos: [kindle], nao: [paperwhite, colorsoft, scribe, capa], busca: "Kindle 16GB"}
+  - {nome: Apple Watch SE, categoria: smartwatch, termos: [apple watch se], busca: "Apple Watch SE"}
+  - {nome: Apple Watch Series 11, categoria: smartwatch, termos: [apple watch, [series 11, s11]], busca: "Apple Watch Series 11"}
+  - {nome: Xiaomi Smart Band 10, categoria: smartwatch, termos: [[xiaomi, mi band, mi smart], band 10], nao: [pro], busca: "Xiaomi Smart Band 10"}
+  - {nome: Xiaomi Smart Band 9, categoria: smartwatch, termos: [[xiaomi, mi band, mi smart], band 9], nao: [pro], busca: "Xiaomi Smart Band 9"}
+  - {nome: Galaxy Watch8, categoria: smartwatch, termos: [[galaxy watch8, galaxy watch 8]], busca: "Galaxy Watch8"}
+  # --- Consoles e controles ---
+  - {nome: PlayStation 5 Slim (disco), categoria: console, termos: [[ps5, playstation 5], slim], nao: [digital, pro], busca: "PlayStation 5 Slim"}
+  - {nome: PlayStation 5 Slim Digital, categoria: console, termos: [[ps5, playstation 5], digital], nao: [pro], busca: "PlayStation 5 Slim Digital"}
+  - {nome: PlayStation 5 Pro, categoria: console, termos: [[ps5 pro, playstation 5 pro]], busca: "PlayStation 5 Pro"}
+  - {nome: Xbox Series S, categoria: console, termos: [xbox series s], busca: "Xbox Series S {capacidade}"}
+  - {nome: Xbox Series X, categoria: console, termos: [xbox series x], busca: "Xbox Series X"}
+  - {nome: Nintendo Switch 2, categoria: console, termos: [switch 2], busca: "Nintendo Switch 2"}
+  - {nome: Nintendo Switch OLED, categoria: console, termos: [switch, oled], nao: [switch 2], busca: "Nintendo Switch OLED"}
+  - {nome: Nintendo Switch Lite, categoria: console, termos: [switch lite], busca: "Nintendo Switch Lite"}
+  - {nome: Meta Quest 3S, categoria: console, termos: [quest 3s], busca: "Meta Quest 3S"}
+  - {nome: Controle DualSense, categoria: controle, termos: [dualsense], nao: [edge, base, carregador, capa, suporte], busca: "Controle DualSense"}
+  - {nome: Controle DualSense Edge, categoria: controle, termos: [dualsense edge], busca: "Controle DualSense Edge"}
+  - {nome: Controle Xbox Series, categoria: controle, termos: [controle, xbox], nao: [elite, capa, suporte, carregador], busca: "Controle Xbox Series sem fio"}
+  # --- Placas de vídeo ---
+  - {nome: RTX 5090, categoria: placa_de_video, termos: [rtx 5090], busca: "Placa de vídeo RTX 5090"}
+  - {nome: RTX 5080, categoria: placa_de_video, termos: [rtx 5080], busca: "Placa de vídeo RTX 5080"}
+  - {nome: RTX 5070 Ti, categoria: placa_de_video, termos: [rtx 5070 ti], busca: "Placa de vídeo RTX 5070 Ti"}
+  - {nome: RTX 5070, categoria: placa_de_video, termos: [rtx 5070], nao: [ti], busca: "Placa de vídeo RTX 5070"}
+  - {nome: RTX 5060 Ti, categoria: placa_de_video, termos: [rtx 5060 ti], busca: "Placa de vídeo RTX 5060 Ti {vram}"}
+  - {nome: RTX 5060, categoria: placa_de_video, termos: [rtx 5060], nao: [ti], busca: "Placa de vídeo RTX 5060"}
+  - {nome: RTX 4060, categoria: placa_de_video, termos: [rtx 4060], nao: [ti], busca: "Placa de vídeo RTX 4060"}
+  - {nome: RTX 3060, categoria: placa_de_video, termos: [rtx 3060], nao: [ti], busca: "Placa de vídeo RTX 3060"}
+  - {nome: RX 9070 XT, categoria: placa_de_video, termos: [rx 9070 xt], busca: "Placa de vídeo RX 9070 XT"}
+  - {nome: RX 9070, categoria: placa_de_video, termos: [rx 9070], nao: [xt], busca: "Placa de vídeo RX 9070"}
+  - {nome: RX 9060 XT, categoria: placa_de_video, termos: [rx 9060 xt], busca: "Placa de vídeo RX 9060 XT {vram}"}
+  - {nome: RX 7600, categoria: placa_de_video, termos: [rx 7600], nao: [xt], busca: "Placa de vídeo RX 7600"}
+  # --- Processadores ---
+  - {nome: Ryzen 7 9800X3D, categoria: processador, termos: [9800x3d], busca: "Processador Ryzen 7 9800X3D"}
+  - {nome: Ryzen 7 7800X3D, categoria: processador, termos: [7800x3d], busca: "Processador Ryzen 7 7800X3D"}
+  - {nome: Ryzen 7 5700X3D, categoria: processador, termos: [5700x3d], busca: "Processador Ryzen 7 5700X3D"}
+  - {nome: Ryzen 5 9600X, categoria: processador, termos: [9600x], busca: "Processador Ryzen 5 9600X"}
+  - {nome: Ryzen 5 7600, categoria: processador, termos: [ryzen 5 7600], busca: "Processador Ryzen 5 7600"}
+  - {nome: Ryzen 5 5600, categoria: processador, termos: [ryzen 5 5600], busca: "Processador Ryzen 5 5600"}
+  - {nome: Ryzen 5 5500, categoria: processador, termos: [ryzen 5 5500], busca: "Processador Ryzen 5 5500"}
+  - {nome: Core i5-14400F, categoria: processador, termos: [14400f], busca: "Processador Core i5 14400F"}
+  - {nome: Core i5-12400F, categoria: processador, termos: [12400f], busca: "Processador Core i5 12400F"}
+  # --- Armazenamento / memória / monitor (comparação por especificação) ---
+  - {nome: SSD NVMe 1TB, categoria: ssd, termos: [ssd, [nvme, pcie], [1tb, 1 tb, 1000gb, 1.000gb]]}
+  - {nome: SSD NVMe 2TB, categoria: ssd, termos: [ssd, [nvme, pcie], [2tb, 2 tb]]}
+  - {nome: SSD NVMe 512GB, categoria: ssd, termos: [ssd, [nvme, pcie], [512gb, 500gb, 512 gb, 500 gb]]}
+  - {nome: SSD SATA 480/512GB, categoria: ssd, termos: [ssd, sata, [480gb, 512gb, 500gb, 480 gb, 512 gb]], nao: [nvme, pcie]}
+  - {nome: Memória DDR4 16GB, categoria: memoria_ram, termos: [ddr4, [16gb, 16 gb, 2x8gb]]}
+  - {nome: Memória DDR5 32GB, categoria: memoria_ram, termos: [ddr5, [32gb, 32 gb, 2x16gb]]}
+  - {nome: Monitor 27" QHD, categoria: monitor, termos: [monitor, [27, 27 pol, 27 polegadas], [qhd, 2k, 1440p, wqhd]]}
+  - {nome: Monitor gamer 24" 144Hz+, categoria: monitor, termos: [monitor, [23.8, 24, 23,8], [144hz, 165hz, 170hz, 180hz, 200hz]]}
+  # --- Periféricos ---
+  - {nome: Logitech G203, categoria: mouse, termos: [g203], busca: "Mouse Logitech G203"}
+  - {nome: Logitech G305, categoria: mouse, termos: [g305], busca: "Mouse Logitech G305"}
+  - {nome: Logitech G Pro X Superlight, categoria: mouse, termos: [superlight], busca: "Logitech G Pro X Superlight"}
+  - {nome: Redragon Kumara, categoria: teclado, termos: [kumara], busca: "Teclado Redragon Kumara"}
+  - {nome: Aula F75, categoria: teclado, termos: [aula, f75], busca: "Teclado Aula F75"}
+  - {nome: HyperX Cloud III, categoria: headset, termos: [cloud iii], busca: "Headset HyperX Cloud III"}
+  # --- Áudio ---
+  - {nome: AirPods Pro 3, categoria: fone, termos: [airpods pro, [3, 3a geracao]], busca: "AirPods Pro 3"}
+  - {nome: AirPods Pro 2, categoria: fone, termos: [airpods pro, [2, 2a geracao]], busca: "AirPods Pro 2"}
+  - {nome: AirPods 4, categoria: fone, termos: [airpods 4], busca: "AirPods 4"}
+  - {nome: Galaxy Buds3 Pro, categoria: fone, termos: [[buds3 pro, buds 3 pro]], busca: "Galaxy Buds3 Pro"}
+  - {nome: Galaxy Buds FE, categoria: fone, termos: [buds fe], busca: "Galaxy Buds FE"}
+  - {nome: JBL Tune 520BT, categoria: fone, termos: [520bt], busca: "JBL Tune 520BT"}
+  - {nome: JBL Flip 7, categoria: caixa_de_som, termos: [flip 7], busca: "JBL Flip 7"}
+  - {nome: JBL Flip 6, categoria: caixa_de_som, termos: [flip 6], busca: "JBL Flip 6"}
+  - {nome: JBL Charge 6, categoria: caixa_de_som, termos: [charge 6], busca: "JBL Charge 6"}
+  - {nome: JBL Charge 5, categoria: caixa_de_som, termos: [charge 5], busca: "JBL Charge 5"}
+  - {nome: JBL Go 4, categoria: caixa_de_som, termos: [jbl go 4], busca: "JBL Go 4"}
+  - {nome: JBL Boombox 3, categoria: caixa_de_som, termos: [boombox 3], busca: "JBL Boombox 3"}
+  # --- Casa / streaming ---
+  - {nome: Echo Dot 5ª geração, categoria: assistente, termos: [echo dot], nao: [capa, suporte], busca: "Echo Dot 5ª geração"}
+  - {nome: Echo Pop, categoria: assistente, termos: [echo pop], busca: "Echo Pop"}
+  - {nome: Fire TV Stick 4K, categoria: streaming, termos: [fire tv stick 4k], busca: "Fire TV Stick 4K"}
+  - {nome: Fire TV Stick Lite/HD, categoria: streaming, termos: [fire tv stick], nao: [4k], busca: "Fire TV Stick"}
+  - {nome: Xiaomi TV Box S, categoria: streaming, termos: [xiaomi, tv box s], busca: "Xiaomi TV Box S"}
+  - {nome: MacBook Air M4, categoria: notebook, termos: [macbook air, m4], busca: "MacBook Air M4 {capacidade}", liquidez: alta}

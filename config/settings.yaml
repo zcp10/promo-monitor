@@ -1,0 +1,205 @@
+# ============================================================
+#  Promo Monitor — configuração
+#  Tudo que é regra de negócio fica aqui, não no código.
+# ============================================================
+
+telegram:
+  # Grupos/canais de promoção a monitorar: @username ou id numérico (-100...).
+  # Rode `python main.py list-chats` para descobrir os ids dos seus grupos.
+  groups:
+    - "@exemplo_canal_promos"
+  # Ignora posts com estas palavras (ex.: cursos, assinaturas)
+  ignore_keywords: ["curso", "assinatura", "ebook", "cashback apenas"]
+
+# ------------------------------------------------------------
+# Quando uma oferta é "rentável"
+# ------------------------------------------------------------
+rules:
+  # Lucro líquido mínimo POR UNIDADE = base + % do custo da unidade
+  # (R$ 10 -> 25,50 · R$ 100 -> 30 · R$ 1.000 -> 75 · R$ 3.000 -> 175)
+  # Post com várias unidades ("5 fones por R$ 50") é analisado por fone (R$ 10 cada).
+  min_profit_base: 25.00
+  min_profit_pct: 0.05
+  # Tetos diários das fontes pagas (editáveis no painel). 0 = desligada.
+  # HasData: 1.000 créditos/mês ÷ ~10 por busca = ~100 buscas/mês ÷ 30 dias ≈ 3/dia
+  segunda_opiniao_limite_diario: 3
+  # ReefAPI (Zoom/Buscapé): ~3 créditos por produto ≈ 333 produtos/mês ÷ 30 dias ≈ 11/dia
+  reef_limite_diario: 11
+  min_roi: 0.15              # retorno mínimo sobre o custo (15%)
+  min_quotes: 3              # nº mínimo de preços de mercado para confiar na análise
+  # Para vender rápido, você anuncia um pouco abaixo da mediana do mercado
+  sale_discount_vs_median: 0.05
+  # Reserva para devoluções, avarias e imprevistos (% do preço de venda)
+  risk_buffer: 0.03
+  # Preço de compra mínimo para analisar (evita gastar busca com itens de R$ 9)
+  min_offer_price: 40.00
+  # Preço da promoção por unidade, antes de consultar KaBuM/Google. 0 = sem limite.
+  max_offer_price: 150.00
+  google_search:
+    hourly_limit: 10
+    interval_seconds: 60
+    catalog_only: true
+    allowed_categories:
+    - iphone
+    - smartphone
+    - tablet
+    - smartwatch
+    - kindle
+    - console
+    - controle
+    - placa_de_video
+    - processador
+    - placa_mae
+    - ssd
+    - memoria_ram
+    - fonte_pc
+    - monitor
+    - hd_externo
+    - pendrive
+    - cartao_memoria
+    - cooler
+    - gabinete
+    - notebook
+    - pc_gamer
+    - mouse
+    - teclado
+    - headset
+    - microfone
+    - webcam
+    - roteador
+    - fone
+    - caixa_de_som
+    - assistente
+    - streaming
+    - tv
+    - projetor
+    - camera_seguranca
+    - power_bank
+    - carregador
+    - air_fryer
+    - cafeteira
+    - aspirador
+    - ferramenta
+    ignored_headlines:
+    - RESGATE HOJE ÀS 19:00 USAR AMANHÃ
+    selection_basis:
+      date: '2026-10-28'
+      scope: Fones, informática, eletrônicos, games e pequenos eletrodomésticos/ferramentas;
+        limite de compra permanece R$150/un.
+      sources:
+      - https://www.ecommercebrasil.com.br/noticias/olx-eletronicos-celulares-itens-usados-mais-vendidos
+      - https://www.cnnbrasil.com.br/noticias/eletrodomesticos-sao-itens-usados-mais-vendidos-no-1-semestre-pela-olx/
+  # Ajustes por liquidez (config/categories.yaml): o que sai rápido aceita margem menor,
+  # o que demora (volumoso, instalação) precisa compensar.
+  por_liquidez:
+    alta:  {min_roi: 0.12}
+    baixa: {min_roi: 0.25}
+
+# ------------------------------------------------------------
+# Custos da sua operação
+# ------------------------------------------------------------
+costs:
+  tax_rate: 0.06             # imposto sobre a venda (ex.: Simples Nacional ~6%; MEI: 0 e use das_monthly)
+  das_monthly: 0.0           # MEI: valor do DAS mensal (rateado por volume abaixo)
+  monthly_sales_estimate: 30 # nº de vendas/mês para ratear custos fixos
+  packaging: 5.00            # embalagem por envio
+  inbound_shipping_default: 0.0  # frete da compra quando o post não informa
+
+# ------------------------------------------------------------
+# Canais de revenda — VALORES DE REFERÊNCIA (out/2026).
+# As taxas mudam com frequência e variam por categoria:
+# confira em "Custos de vender" (Mercado Livre) e na Central do Vendedor (Shopee).
+# ------------------------------------------------------------
+channels:
+  mercadolivre_classico:
+    enabled: true
+    commission: 0.12
+    fixed_fee_bands:          # aplicado quando o preço de venda está abaixo do limite
+      - {below: 79.00, fee: 6.50}
+    shipping_seller_share: 25.00   # quanto do frete você paga por venda acima de R$ 79 (estimativa)
+    free_shipping_from: 79.00
+  mercadolivre_premium:
+    enabled: true
+    commission: 0.17
+    fixed_fee_bands:
+      - {below: 79.00, fee: 6.50}
+    shipping_seller_share: 25.00
+    free_shipping_from: 79.00
+  shopee:
+    enabled: true
+    commission: 0.14
+    fixed_fee_bands:
+      - {below: 1000000, fee: 7.00}   # taxa fixa por item (aprox.); ajuste pela sua faixa
+    shipping_seller_share: 0.0
+    free_shipping_from: 0
+  venda_direta:               # OLX / Instagram / WhatsApp — sem comissão
+    enabled: true
+    commission: 0.0
+    fixed_fee_bands: []
+    shipping_seller_share: 0.0
+    free_shipping_from: 0
+    price_factor: 0.92        # venda direta costuma sair mais barata que marketplace
+
+# ------------------------------------------------------------
+# Fontes de preço de mercado
+# ------------------------------------------------------------
+pricing:
+  # Reaproveita as cotações do mesmo produto; atualiza ao vencer e surgir nova oferta.
+  reference_cache_days: 30
+  # Busca paga que voltou sem preço compatível não é repetida por estas horas.
+  no_result_cache_hours: 24
+  # Consulta alternativa: só quando a KaBuM não retorna nenhum preço compatível.
+  # Piloto isolado ativado em 28/10/2026; pausas e limites persistem no Docker.
+  google_browser:
+    enabled: true
+    backend: scrapling_docker
+    channel: chrome
+    headless: false
+    interval_seconds: 60
+    hourly_limit: 10
+    cooldown_hours: 24
+    cache_hours: 720
+    max_results: 30
+  # Categorias, produtos top e regras de equivalência ficam em config/categories.yaml
+  kabum:
+    enabled: true             # grátis: busca pública /busca/<termo> (permitida no robots.txt)
+    max_results: 30
+    interval_seconds: 3       # ritmo educado: 1 página a cada 3 s
+  mercadolivre:
+    enabled: false            # API oficial; exige token (MELI_ACCESS_TOKEN). Ligar quando configurar.
+    max_results: 20
+  google_shopping:
+    enabled: true             # HasData somente se o Chrome falhar/não tiver cotação compatível.
+    mode: reserva             # Nunca consultar junto com a fonte anterior.
+    country: br
+    language: pt-br
+    max_results: 20
+  reef:
+    enabled: true             # Zoom/Buscapé via ReefAPI: última alternativa; exige REEF_API_KEY.
+    site: buscape
+    max_results: 30
+    accept_used: true         # Referência de revenda: manter e identificar ofertas usadas.
+  # Lojas consideradas "confiáveis" para a média (domínios ou nomes)
+  trusted_stores: ["mercado livre", "magazine luiza", "magalu", "kabum", "amazon",
+                   "americanas", "casas bahia", "fast shop", "pichau", "terabyte", "carrefour"]
+  # Títulos com estas palavras são descartados da comparação
+  exclude_words: ["usado", "recondicionado", "seminovo", "vitrine", "defeito",
+                  "capa", "película", "pelicula", "case", "suporte para", "compatível com"]
+  # Lojas de usados/recondicionados: puxam a mediana para baixo
+  exclude_stores: ["olx", "trocafy", "enjoei", "back market", "backmarket",
+                   "usados", "seminovos", "recondicionados"]
+  min_match_score: 0.60
+
+# ------------------------------------------------------------
+# Extração com IA (opcional) — usada quando o parser por regras não entende o post
+# ------------------------------------------------------------
+title_filter:
+  # Frases completas de chamada: não bloqueiam posts que tenham outra linha com produto.
+  ignored_headlines: ["combina tudo", "combina com tudo", "esse combina com tudo", "super promoção"]
+
+ai_parser:
+  enabled: true
+  model: claude-haiku-5-5
+
+watchlist:
+  check_every_minutes: 60
